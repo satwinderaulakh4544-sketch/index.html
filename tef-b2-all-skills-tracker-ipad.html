@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TEF Canada — 45-Day All-Skills Sprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1c2a44;
+    --navy-soft:#2f3f5e;
+    --paper:#eef1f5;
+    --paper-card:#f8f9fb;
+    --line:#d4d9e2;
+    --mustard:#c1922e;
+    --brick:#a83b2e;
+    --ink-faint:#5a6478;
+    --tag-bg:#e7eaf0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--navy);
+    font-family:'Inter',system-ui,sans-serif;
+    padding:28px 16px 60px;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+
+  .header{
+    background:var(--navy);
+    color:#f2f4f8;
+    border-radius:10px;
+    padding:26px 28px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .header::after{
+    content:"";
+    position:absolute; right:-40px; top:-40px;
+    width:160px; height:160px;
+    border:2px solid rgba(242,244,248,0.08);
+    border-radius:50%;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--mustard);
+    margin:0 0 8px;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:26px;
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    font-size:13.5px;
+    color:#c7cde0;
+    margin:0 0 20px;
+    max-width:52ch;
+    line-height:1.5;
+  }
+  .progress-row{display:flex; align-items:center; gap:14px;}
+  .bar-track{
+    flex:1; height:8px; background:rgba(255,255,255,0.14);
+    border-radius:99px; overflow:hidden;
+  }
+  .bar-fill{
+    height:100%; width:0%;
+    background:linear-gradient(90deg,var(--mustard),#e0b45a);
+    border-radius:99px;
+    transition:width .4s ease;
+  }
+  .pct{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px; font-weight:600; color:#f2f4f8;
+    min-width:70px; text-align:right;
+  }
+
+  .phase{
+    margin-top:22px;
+    background:var(--paper-card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .phase-head{
+    display:flex; align-items:baseline; gap:10px;
+    padding:16px 20px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .phase-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px; color:var(--mustard); font-weight:600;
+    letter-spacing:0.06em;
+  }
+  .phase-title{
+    font-family:'Fraunces',serif;
+    font-size:17px; font-weight:600; margin:0; color:var(--navy);
+  }
+  .phase-range{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--ink-faint);
+  }
+
+  .day-row{
+    display:flex; align-items:flex-start; gap:14px;
+    padding:13px 20px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .day-row:last-child{border-bottom:none;}
+
+  .day-check{
+    flex:0 0 auto;
+    width:22px; height:22px;
+    border:1.5px solid var(--navy-soft);
+    border-radius:4px;
+    margin-top:2px;
+    cursor:pointer;
+    position:relative;
+    background:#fff;
+    transition:background .15s, border-color .15s;
+  }
+  .day-check.checked{
+    background:var(--navy);
+    border-color:var(--navy);
+  }
+  .day-check.checked::after{
+    content:"";
+    position:absolute; left:6px; top:2px;
+    width:6px; height:11px;
+    border:solid #fff;
+    border-width:0 2px 2px 0;
+    transform:rotate(40deg);
+  }
+
+  .day-body{flex:1; min-width:0;}
+  .day-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--ink-faint);
+    letter-spacing:0.04em;
+    margin-bottom:6px;
+  }
+  .skill-row{
+    display:flex; gap:8px; align-items:flex-start;
+    margin-bottom:5px;
+  }
+  .skill-row:last-child{margin-bottom:0;}
+  .skill-tag{
+    flex:0 0 auto;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px; font-weight:600;
+    letter-spacing:0.05em;
+    padding:2px 6px;
+    border-radius:3px;
+    background:var(--tag-bg);
+    color:var(--ink-faint);
+    margin-top:1px;
+  }
+  .skill-row.w .skill-tag{ background:var(--navy); color:#fff; }
+  .skill-text{
+    font-size:13.5px; line-height:1.45; color:var(--navy-soft);
+  }
+  .skill-row.w .skill-text{ font-weight:500; color:var(--navy); }
+
+  .day-row.done .skill-text{ color:#9aa2b3; }
+  .day-row.done .skill-row.w .skill-text{ color:#9aa2b3; font-weight:400; }
+  .day-row.done .day-label{ color:#a6adbc; }
+  .day-row.done .skill-tag{ opacity:0.55; }
+
+  .stamp{
+    position:absolute; right:16px; top:10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; font-weight:600;
+    color:var(--brick);
+    border:1.5px solid var(--brick);
+    border-radius:3px;
+    padding:2px 7px;
+    transform:rotate(-8deg);
+    opacity:0;
+    letter-spacing:0.08em;
+    pointer-events:none;
+    transition:opacity .2s;
+  }
+  .day-row.done .stamp{opacity:0.85;}
+
+  .footer-row{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:20px; gap:12px; flex-wrap:wrap;
+  }
+  .hint{font-size:12px; color:var(--ink-faint); max-width:46ch; line-height:1.5;}
+  .reset-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:0.04em;
+    background:none; border:1px solid var(--line);
+    color:var(--ink-faint); border-radius:6px;
+    padding:7px 12px; cursor:pointer;
+  }
+  .reset-btn:hover{border-color:var(--brick); color:var(--brick);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <p class="eyebrow">Toutes les compétences · B1 → B2</p>
+    <h1>45-Day All-Skills Sprint</h1>
+    <p class="sub">Writing stays your daily anchor since it's the weak point. Reading and listening get steady daily reps; speaking rotates between light daily touches and full recorded sessions.</p>
+    <div class="progress-row">
+      <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+      <div class="pct" id="pctLabel">0 / 45</div>
+    </div>
+  </div>
+
+  <div id="phases"></div>
+
+  <div class="footer-row">
+    <p class="hint">Progress is saved to your account automatically. Checking a day tracks that you did all four tasks — the work itself lives in your notebook or recordings.</p>
+    <button class="reset-btn" id="resetBtn">Reset progress</button>
+  </div>
+</div>
+
+<script>
+const PHASES = [
+{num:"PHASE I", title:"Diagnostic & Foundations", range:"Days 1–5", start:1, days:[
+{w:"Full timed diagnostic: 25 min Section A + 35 min Section B, no prep. Save it as your baseline.",
+ r:"Skim the official reading section format and question types — no test yet.",
+ l:"Skim the listening section format and audio types — no test yet.",
+ s:"Skim the speaking section format (Section A/B structure) — no recording yet."},
+{w:"Study the official rubric (communication, coherence, vocabulary, grammar) against your Day 1 piece.",
+ r:"Full timed reading diagnostic — save this score as your baseline.",
+ l:"Listen to one 5-min French news clip; note what you understood without a script.",
+ s:"Record a 1-minute self-introduction in French."},
+{w:"Learn Section A rules: impersonal tone, no je, passé composé for events + imparfait for background, 80+ words.",
+ r:"Review your reading diagnostic against the rubric — note your weakest question type.",
+ l:"Full timed listening diagnostic — save this score as your baseline.",
+ s:"Record answers to 2 simple speaking prompts, untimed."},
+{w:"Learn the Section B skeleton: position → 2–3 arguments → 1 concrete example → concession → conclusion.",
+ r:"Read one short article and summarize it in 3 sentences.",
+ l:"Review your listening diagnostic — note which accents or speeds tripped you up.",
+ s:"Full timed speaking diagnostic (5 min + 10 min), recorded — save this as your baseline."},
+{w:"Build a personal connector bank (25 linking words/phrases) and open a running error log.",
+ r:"Light comprehension set, 8 questions, untimed.",
+ l:"Light dictation practice — transcribe a 2-minute clip as closely as you can.",
+ s:"Review your Day 4 recording against the rubric — note your top 2 issues."}
+]},
+{num:"PHASE II", title:"Templates & Building Blocks", range:"Days 6–17", start:6, days:[
+{w:"Write one short Section A continuation, untimed. Focus only on tone and tense accuracy.", r:"Read a short French news article; note 5 new words and 1 new sentence structure.", l:"Listen to a 5–10 min French podcast or news segment; summarize in 3 sentences.", s:"Record a 1-minute answer to a simple opinion question; listen back for filler words."},
+{w:"Rewrite yesterday's piece using 3 new connectors from your bank.", r:"10 TEF-style reading comprehension questions, untimed; check answers and note error patterns.", l:"10–12 TEF-style listening comprehension questions, untimed; check answers and note error patterns.", s:"5 min: read a paragraph aloud for pronunciation."},
+{w:"Grammar drill: passé composé vs imparfait — 20 sentences, self-correct.", r:"Read a short French news article; note 5 new words and 1 new sentence structure.", l:"Listen to a 5–10 min French podcast or news segment; summarize in 3 sentences.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"Write one Section B essay, untimed, on an easy topic (e.g. 'Should university be free?').", r:"10 TEF-style reading comprehension questions, untimed; check answers and note error patterns.", l:"10–12 TEF-style listening comprehension questions, untimed; check answers and note error patterns.", s:"Practice 5 'obtaining information' questions aloud (Speaking Section A skill)."},
+{w:"Grammar drill: subjunctive after opinion verbs (il faut que, je doute que, bien que).", r:"Read a short French news article; note 5 new words and 1 new sentence structure.", l:"Listen to a 5–10 min French podcast or news segment; summarize in 3 sentences.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"Rewrite Day 9's essay adding subjunctive and conditional structures.", r:"10 TEF-style reading comprehension questions, untimed; check answers and note error patterns.", l:"10–12 TEF-style listening comprehension questions, untimed; check answers and note error patterns.", s:"5 min: read a paragraph aloud for pronunciation."},
+{w:"Vocabulary sprint: 15 B2 opinion phrases (à mon sens, il me semble que, on peut affirmer que).", r:"Read a short French news article; note 5 new words and 1 new sentence structure.", l:"Listen to a 5–10 min French podcast or news segment; summarize in 3 sentences.", s:"Record a 2-minute persuasive argument on a simple topic (Speaking Section B skill)."},
+{w:"New Section A piece, untimed — self-score with the rubric.", r:"10 TEF-style reading comprehension questions, untimed; check answers and note error patterns.", l:"10–12 TEF-style listening comprehension questions, untimed; check answers and note error patterns.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"New Section B essay on a work/immigration-related topic — self-score with the rubric.", r:"Read a short French news article; note 5 new words and 1 new sentence structure.", l:"Listen to a 5–10 min French podcast or news segment; summarize in 3 sentences.", s:"5 min: read a paragraph aloud for pronunciation."},
+{w:"Grammar drill: complex sentences with relative pronouns (dont, lequel, ce qui / ce que).", r:"10 TEF-style reading comprehension questions, untimed; check answers and note error patterns.", l:"10–12 TEF-style listening comprehension questions, untimed; check answers and note error patterns.", s:"Record a 1-minute answer to a simple opinion question; listen back for filler words."},
+{w:"Review your error log — pick your top 3 recurring mistakes and drill them directly.", r:"Read a short French news article; note 5 new words and 1 new sentence structure.", l:"Listen to a 5–10 min French podcast or news segment; summarize in 3 sentences.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"Light review day. Reread your strongest piece so far and note exactly what made it work.", r:"10 TEF-style reading comprehension questions, untimed; check answers and note error patterns.", l:"10–12 TEF-style listening comprehension questions, untimed; check answers and note error patterns.", s:"5 min: read a paragraph aloud for pronunciation."}
+]},
+{num:"PHASE III", title:"Timed Practice & Feedback Loops", range:"Days 18–32", start:18, days:[
+{w:"First full timed session since Day 1. Compare it directly against your baseline.", r:"Timed reading set, ~45 min, no dictionary — new topic, simulate real pressure.", l:"Timed listening set, ~40 min, no pausing or replaying — new topic.", s:"5 min: read your Section A response aloud, focus on liaison and rhythm."},
+{w:"Get it corrected (tutor, exchange partner, or AI tool) — log every error type.", r:"Review yesterday's timed reading set — redo missed questions and note why.", l:"Review yesterday's timed listening set — replay missed parts and note why.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"Targeted drill on whichever error type showed up most yesterday.", r:"Timed reading set, ~45 min — new topic.", l:"Timed listening set, ~40 min — new topic.", s:"Full timed Speaking simulation (5 + 10 min), recorded — get it corrected if possible."},
+{w:"Timed Section A only, 25 min, two attempts back to back — aim for 90–120 words.", r:"Review yesterday's timed reading set — redo missed questions and note why.", l:"Review yesterday's timed listening set — replay missed parts and note why.", s:"5 min: read your Section B response aloud, focus on connectors and pacing."},
+{w:"Timed Section B only, 35 min, two attempts back to back — aim for 220–260 words.", r:"Timed reading set, ~45 min — new topic.", l:"Timed listening set, ~40 min — new topic.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"Get corrected, update the error log.", r:"Review yesterday's timed reading set — redo missed questions and note why.", l:"Review yesterday's timed listening set — replay missed parts and note why.", s:"Full timed Speaking simulation (5 + 10 min), recorded — get it corrected if possible."},
+{w:"Vocabulary review — add 10 new B2 phrases pulled from this week's corrections.", r:"Timed reading set, ~45 min — new topic.", l:"Timed listening set, ~40 min — new topic.", s:"5 min: read a paragraph aloud for pronunciation."},
+{w:"Full timed session on an unfamiliar topic type.", r:"Review yesterday's timed reading set — redo missed questions and note why.", l:"Review yesterday's timed listening set — replay missed parts and note why.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"Get corrected, update the error log.", r:"Timed reading set, ~45 min — new topic.", l:"Timed listening set, ~40 min — new topic.", s:"Full timed Speaking simulation (5 + 10 min), recorded — get it corrected if possible."},
+{w:"Grammar deep-dive on your weakest tense/structure from the log.", r:"Review yesterday's timed reading set — redo missed questions and note why.", l:"Review yesterday's timed listening set — replay missed parts and note why.", s:"5 min: read your Section A response aloud, focus on liaison and rhythm."},
+{w:"Full timed session — practice cutting yourself off cleanly at the buzzer.", r:"Timed reading set, ~45 min — new topic.", l:"Timed listening set, ~40 min — new topic.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"Get corrected, update the error log.", r:"Review yesterday's timed reading set — redo missed questions and note why.", l:"Review yesterday's timed listening set — replay missed parts and note why.", s:"Full timed Speaking simulation (5 + 10 min), recorded — get it corrected if possible."},
+{w:"Read 2 native opinion pieces (Le Monde, Radio-Canada) and note structures worth borrowing.", r:"Timed reading set, ~45 min — new topic.", l:"Timed listening set, ~40 min — new topic.", s:"5 min: read your Section B response aloud, focus on connectors and pacing."},
+{w:"Full timed session applying 2 structures borrowed from yesterday.", r:"Review yesterday's timed reading set — redo missed questions and note why.", l:"Review yesterday's timed listening set — replay missed parts and note why.", s:"5 min: answer an easy question aloud, unscripted."},
+{w:"Get corrected — checkpoint: compare this week's average against Phase II.", r:"Timed reading set, ~45 min — checkpoint: compare your average against Phase II.", l:"Timed listening set, ~40 min — checkpoint: compare your average against Phase II.", s:"Full timed Speaking simulation — checkpoint against your earlier sessions."}
+]},
+{num:"PHASE IV", title:"Full Mock Exams", range:"Days 33–42", start:33, days:[
+{w:"Full mock writing exam, real conditions: same timing, no dictionary, no pausing.", r:"Full mock Reading section, real timing.", l:"Full mock Listening section, real timing.", s:"5 min: light pronunciation warm-up."},
+{w:"Get corrected, update the error log.", r:"Get Reading mock corrected, update your error log.", l:"Get Listening mock corrected, update your error log.", s:"5 min: light pronunciation warm-up."},
+{w:"Rest from full mocks — review your writing error log and tighten 2 template phrases.", r:"Light review — reread flagged vocabulary from your error log.", l:"Light review — replay flagged audio clips from your error log.", s:"Full timed Speaking simulation (5 + 10 min), recorded and corrected."},
+{w:"Full mock writing exam, a fresh topic pair.", r:"Full mock Reading section, real timing — fresh topics.", l:"Full mock Listening section, real timing — fresh topics.", s:"5 min: light pronunciation warm-up."},
+{w:"Get corrected, update the error log.", r:"Get Reading mock corrected, update your error log.", l:"Get Listening mock corrected, update your error log.", s:"5 min: light pronunciation warm-up."},
+{w:"Review Day 37's corrections — rewrite your weakest paragraph from scratch.", r:"Light review — reread flagged vocabulary from your error log.", l:"Light review — replay flagged audio clips from your error log.", s:"Full timed Speaking simulation (5 + 10 min), recorded and corrected."},
+{w:"Full mock — focus on B2 markers landing naturally: subjunctive, nuance, varied connectors.", r:"Full mock Reading section — focus on precise vocabulary and nuance.", l:"Full mock Listening section — focus on catching detail, not just gist.", s:"5 min: light pronunciation warm-up."},
+{w:"Get corrected, update the error log.", r:"Get Reading mock corrected, update your error log.", l:"Get Listening mock corrected, update your error log.", s:"5 min: light pronunciation warm-up."},
+{w:"Review your 5 most common errors across all mocks — write a cheat sheet you know cold.", r:"Review your 5 most common reading errors — build a cheat sheet.", l:"Review your 5 most common listening errors — build a cheat sheet.", s:"Review your speaking recordings — refine your 2 weakest phrases."},
+{w:"Full mock writing exam — your dress rehearsal. Treat it exactly like exam day.", r:"Full mock Reading section — dress rehearsal, treat it like exam day.", l:"Full mock Listening section — dress rehearsal, treat it like exam day.", s:"Full timed Speaking simulation — dress rehearsal, treat it like exam day."}
+]},
+{num:"PHASE V", title:"Taper & Exam Readiness", range:"Days 43–45", start:43, days:[
+{w:"Get yesterday's mock corrected. Light review only — no new material from here.", r:"Light review only — skim your reading cheat sheet.", l:"Light review only — skim your listening cheat sheet.", s:"Light review only — skim your speaking phrase list."},
+{w:"Reread your cheat sheet and your 3 best pieces. Confirm exam logistics: location, ID, arrival time.", r:"Confirm exam logistics; reread your reading cheat sheet once.", l:"Confirm exam logistics; reread your listening cheat sheet once.", s:"Confirm exam logistics; reread your speaking phrase list once."},
+{w:"Rest. Skim the connector bank once. Sleep well — fatigue costs more B2 points than grammar gaps.", r:"Rest. No new material.", l:"Rest. No new material.", s:"Rest. No new material."}
+]}
+];
+
+const STORAGE_KEY = "tef-b2-all-skills-tracker-progress";
+let completed = new Set();
+
+function buildDom(){
+  const container = document.getElementById("phases");
+  container.innerHTML = "";
+  PHASES.forEach(phase => {
+    const block = document.createElement("div");
+    block.className = "phase";
+
+    const head = document.createElement("div");
+    head.className = "phase-head";
+    head.innerHTML = `<span class="phase-num">${phase.num}</span><h2 class="phase-title">${phase.title}</h2><span class="phase-range">${phase.range}</span>`;
+    block.appendChild(head);
+
+    phase.days.forEach((d, i) => {
+      const dayNum = phase.start + i;
+      const row = document.createElement("div");
+      row.className = "day-row";
+      row.dataset.day = dayNum;
+
+      row.innerHTML = `
+        <div class="day-check" data-day="${dayNum}"></div>
+        <div class="day-body">
+          <div class="day-label">DAY ${String(dayNum).padStart(2,"0")}</div>
+          <div class="skill-row w"><span class="skill-tag">W</span><span class="skill-text">${d.w}</span></div>
+          <div class="skill-row"><span class="skill-tag">R</span><span class="skill-text">${d.r}</span></div>
+          <div class="skill-row"><span class="skill-tag">L</span><span class="skill-text">${d.l}</span></div>
+          <div class="skill-row"><span class="skill-tag">S</span><span class="skill-text">${d.s}</span></div>
+        </div>
+        <div class="stamp">FAIT</div>
+      `;
+      block.appendChild(row);
+    });
+
+    container.appendChild(block);
+  });
+
+  document.querySelectorAll(".day-check").forEach(el => {
+    el.addEventListener("click", () => toggleDay(parseInt(el.dataset.day, 10)));
+  });
+
+  refreshUI();
+}
+
+function refreshUI(){
+  document.querySelectorAll(".day-row").forEach(row => {
+    const day = parseInt(row.dataset.day, 10);
+    const checkEl = row.querySelector(".day-check");
+    const isDone = completed.has(day);
+    row.classList.toggle("done", isDone);
+    checkEl.classList.toggle("checked", isDone);
+  });
+  const pct = Math.round((completed.size / 45) * 100);
+  document.getElementById("barFill").style.width = pct + "%";
+  document.getElementById("pctLabel").textContent = `${completed.size} / 45`;
+}
+
+function toggleDay(day){
+  if (completed.has(day)) completed.delete(day);
+  else completed.add(day);
+  refreshUI();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(completed)));
+}
+
+function loadProgress(){
+  try {
+    const result = localStorage.getItem(STORAGE_KEY);
+    if (result) completed = new Set(JSON.parse(result));
+  } catch(e) { completed = new Set(); }
+}
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  completed = new Set();
+  refreshUI();
+  localStorage.removeItem(STORAGE_KEY);
+});
+
+(function init(){
+  buildDom();
+  loadProgress();
+  refreshUI();
+})();
+</script>
+</body>
+</html>
